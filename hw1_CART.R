@@ -9,8 +9,8 @@ slope = diff[2]/diff[1]
 intercept = p1[2] - slope*p1[1]
 
 # Generate data 
-n = 2
-X = data.frame(x0 = rep(1, n), 
+n = 20
+X = data.frame(x0 = rep(.01, n), 
                x1 = runif(n, min = -1, max = 1), 
                x2 = runif(n, min = -1, max = 1))
 
@@ -37,7 +37,7 @@ check = function(a) {
 # treat rows as elements)
 X$misclassified = rep(TRUE, n)
 X$obs = seq(1, n)
-
+count = 0
 while (sum(X$misclassified) > 0) {
   
   # Samples one observation from the misclassfied pool of points
@@ -55,7 +55,16 @@ while (sum(X$misclassified) > 0) {
     correct = 0
   }
   X$misclassified = check(X)
+  count = count + 1
 }
 
+cat("Iterations till converge: \n", count)
 
+library(ggplot2) 
+
+X$y = as.factor(y)
+ggplot(X, aes(x=x1, y = x2, shape = y)) +
+  geom_point() +
+  geom_abline(intercept=intercept, slope=-W[2]/W[3], color = "red") +
+  xlim(-1, 1) + ylim(-1, 1)
 
